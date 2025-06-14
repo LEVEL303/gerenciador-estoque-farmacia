@@ -9,12 +9,21 @@ if (!isset($_SESSION['usuario'])) {
 
 $msg = $_GET['msg'] ?? null;
 $erro = $_GET['erro'] ?? null;
+$busca = $_GET['busca'] ?? '';
 
-if ($msg || $erro) {
+if (!empty($busca)) {
+    $stmt = $conexao->prepare("SELECT * FROM produtos WHERE nome LIKE ? OR cod_barras LIKE ? ORDER BY nome");
+    $termo = $busca . '%';
+    $stmt->bind_param("ss", $termo, $termo);
+} else {
+    $stmt = $conexao->prepare("SELECT * FROM produtos ORDER BY nome");
+}
+$stmt->execute();
+$produtos = $stmt->get_result();
+
+if ($msg || $erro || $busca) {
     echo '<script>history.replaceState(null, "", "listar.php");</script>';
 }
-
-$produtos = $conexao->query("SELECT * FROM produtos ORDER BY nome");
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +46,9 @@ $produtos = $conexao->query("SELECT * FROM produtos ORDER BY nome");
         </div>
     </div>
 
-    <input type="text" class="form-control mb-3" placeholder="Buscar por nome ou código de barras" id="campoBusca">
+    <form method="GET" class="mb-3">
+        <input type="text" name="busca" class="form-control mb-3" placeholder="Buscar por nome ou código de barras">
+    </form>
 
     <?php if ($msg): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
