@@ -7,6 +7,13 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
+$msg = $_GET['msg'] ?? null;
+$erro = $_GET['erro'] ?? null;
+
+if ($msg || $erro) {
+    echo '<script>history.replaceState(null, "", "listar.php");</script>';
+}
+
 $produtos = $conexao->query("SELECT * FROM produtos ORDER BY nome");
 ?>
 
@@ -31,6 +38,20 @@ $produtos = $conexao->query("SELECT * FROM produtos ORDER BY nome");
     </div>
 
     <input type="text" class="form-control mb-3" placeholder="Buscar por nome ou código de barras" id="campoBusca">
+
+    <?php if ($msg): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($msg) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($erro): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($erro) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
     <table class="table table-bordered table-striped">
         <thead>

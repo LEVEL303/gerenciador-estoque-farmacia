@@ -10,8 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         header("Location: login.php");
-        exit;
     } else {
-        echo "Erro ao cadastrar: " . $stmt->error;
+        header('Location: cadastro.php?erro=Erro ao cadastrar');
     }
+    $stmt->close();
 }
+$conexao->close();

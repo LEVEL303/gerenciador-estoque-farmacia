@@ -16,9 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($senha, $usuario['senha'])) {
             $_SESSION['usuario'] = $usuario['id'];
             header('Location: ../produtos/listar.php');
-            exit;
+        } else {
+            header('Location: login.php?erro=Usuário e/ou senha inválidos');
         }
+    } else {
+        header('Location: login.php?erro=Usuário e/ou senha inválidos');
     }
-
-    echo "Usuário e/ou senha inválidos";
+    $stmt->close();
 }
+$conexao->close();

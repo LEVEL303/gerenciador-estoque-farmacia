@@ -13,8 +13,7 @@ $dados = $resultado->fetch_assoc();
 
 if ($dados['total'] == 0) {
     header('Location: auth/cadastro.php');
-    exit;
 } else {
     header('Location: auth/login.php');
-    exit;
 }
+$conexao->close();
