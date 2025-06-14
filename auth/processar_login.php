@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $usuario = $resultado->fetch_assoc();
         if (password_verify($senha, $usuario['senha'])) {
             $_SESSION['usuario'] = $usuario['id'];
-            header('Location: ../produtos/lisar.php');
+            header('Location: ../produtos/listar.php');
             exit;
         }
     }
