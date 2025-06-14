@@ -12,9 +12,9 @@ $resultado = $conexao->query($sql);
 $dados = $resultado->fetch_assoc();
 
 if ($dados['total'] == 0) {
-    header('Location: cadastro.php');
+    header('Location: auth/cadastro.php');
     exit;
 } else {
-    header('Location: login.php');
+    header('Location: auth/login.php');
     exit;
 }
