@@ -12,13 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantidade = $_POST['quantidade'];
 
     if ($quantidade > 0) {
-        $stmt = $conexao->prepare("UPDATE produtos SET quantidade = GREATEST(quantidade - ?, 0) WHERE id = ?");
+        $stmt = $conexao->prepare("UPDATE produtos SET quantidade = quantidade + ? WHERE id = ?");
         $stmt->bind_param('ii', $quantidade, $id);
-        
+
         if ($stmt->execute()) {
-            header('Location: listar.php?msg=Quantidade decrementada com sucesso');
+            header('Location: listar.php?msg=Quantidade incrementada com sucesso');
         } else {
-            header('Location: listar.php?erro=Erro ao decrementar quantidade');
+            header('Location: listar.php?erro=Erro ao incrementar quantidade');
         }
 
         $stmt->close();
