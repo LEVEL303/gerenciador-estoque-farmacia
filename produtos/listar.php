@@ -87,7 +87,7 @@ if ($msg || $erro || $busca) {
             <tr>
                 <td><?= htmlspecialchars($p['cod_barras']) ?></td>
                 <td><?= htmlspecialchars($p['nome']) ?></td>
-                <td><?= htmlspecialchars($p['descricao']) ?></td>
+                <td><?= htmlspecialchars($p['descricao'] ?? '') ?></td>
                 <td><?= $p['grupo'] ?></td>
 
                 <td><?= $p['grupo'] === 'medicamento' ? $p['classificacao'] : '—' ?></td>
@@ -96,27 +96,33 @@ if ($msg || $erro || $busca) {
                 <td><?= $p['quantidade'] ?></td>
 
                 <td><?= $p['grupo'] === 'medicamento' ? ($p['medicamento_controlado'] ? 'Sim' : 'Não') : '—' ?></td>
-                <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['principio_ativo']) : '—' ?></td>
-                <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['registro_ms']) : '—' ?></td>
+                <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['principio_ativo'] ?? '') : '—' ?></td>
+                <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['registro_ms'] ?? '') : '—' ?></td>
 
                 <td>R$<?= number_format($p['preco'], 2, ',', '.') ?></td>
 
                 <td>
+                    <form action="decrementar_quantidade.php" method="POST" class="d-inline">
+                        <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                        <input type="number" name="quantidade" value="1" min="1" max="<?= $p['quantidade'] ?>" class="form-control form-control-sm mb-1" style="width: 80px; display: inline-block;">
+                        <button class="btn btn-sm btn-warning">Baixar</button>
+                    </form>
+
                     <button class="btn btn-sm btn-warning"
                         data-bs-toggle="modal"
                         data-bs-target="#modalEditar"
                         data-id="<?= $p['id'] ?>"
                         data-cod="<?= htmlspecialchars($p['cod_barras']) ?>"
                         data-nome="<?= htmlspecialchars($p['nome']) ?>"
-                        data-descricao="<?= htmlspecialchars($p['descricao']) ?>"
+                        data-descricao="<?= htmlspecialchars($p['descricao'] ?? '') ?>"
                         data-grupo="<?= $p['grupo'] ?>"
                         data-classificacao="<?= $p['classificacao'] ?>"
                         data-fabricante="<?= htmlspecialchars($p['fabricante']) ?>"
                         data-validade="<?= $p['validade'] ?>"
                         data-quantidade="<?= $p['quantidade'] ?>"
                         data-controlado="<?= $p['medicamento_controlado'] ?>"
-                        data-principio="<?= htmlspecialchars($p['principio_ativo']) ?>"
-                        data-ms="<?= htmlspecialchars($p['registro_ms']) ?>"
+                        data-principio="<?= htmlspecialchars($p['principio_ativo'] ?? '') ?>"
+                        data-ms="<?= htmlspecialchars($p['registro_ms'] ?? '') ?>"
                         data-preco="<?= $p['preco'] ?>"
                     >Editar
                     </button>
@@ -145,12 +151,12 @@ if ($msg || $erro || $busca) {
 
                 <div class="modal-body row g-3">
                     <div class="col-md-6">
-                        <label>Código de Barras</label>
+                        <label>Código de Barras*</label>
                         <input type="text" name="cod_barras" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label>Nome</label>
+                        <label>Nome*</label>
                         <input type="text" name="nome" class="form-control" required>
                     </div>
 
@@ -160,7 +166,7 @@ if ($msg || $erro || $busca) {
                     </div>
 
                     <div class="col-md-6">
-                        <label>Grupo</label>
+                        <label>Grupo*</label>
                         <select name="grupo" class="form-select" id="grupoSelect" required>
                             <option value="">Selecione</option>
                             <option value="medicamento">Medicamento</option>
@@ -180,17 +186,17 @@ if ($msg || $erro || $busca) {
                     </div>
 
                     <div class="col-md-6">
-                        <label>Fabricante</label>
+                        <label>Fabricante*</label>
                         <input type="text" name="fabricante" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label>Validade</label>
+                        <label>Validade*</label>
                         <input type="date" name="validade" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label>Quantidade</label>
+                        <label>Quantidade*</label>
                         <input type="number" name="quantidade" class="form-control" min="0" required>
                     </div>
 
@@ -213,7 +219,7 @@ if ($msg || $erro || $busca) {
                     </div>
 
                     <div class="col-md-6">
-                        <label>Preço</label>
+                        <label>Preço*</label>
                         <input type="number" step="0.01" name="preco" class="form-control" required>
                     </div>
                 </div>
@@ -239,12 +245,12 @@ if ($msg || $erro || $busca) {
 
                 <div class="modal-body row g-3">
                     <div class="col-md-6">
-                        <label>Código de Barras</label>
+                        <label>Código de Barras*</label>
                         <input type="text" name="cod_barras" id="edit-cod" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label>Nome</label>
+                        <label>Nome*</label>
                         <input type="text" name="nome" id="edit-nome" class="form-control" required>
                     </div>
 
@@ -254,7 +260,7 @@ if ($msg || $erro || $busca) {
                     </div>
 
                     <div class="col-md-6">
-                        <label>Grupo</label>
+                        <label>Grupo*</label>
                         <select name="grupo" class="form-select" id="edit-grupo" required>
                             <option value="">Selecione</option>
                             <option value="medicamento">Medicamento</option>
@@ -274,17 +280,17 @@ if ($msg || $erro || $busca) {
                     </div>
 
                     <div class="col-md-6">
-                        <label>Fabricante</label>
+                        <label>Fabricante*</label>
                         <input type="text" name="fabricante" id="edit-fabricante" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label>Validade</label>
+                        <label>Validade*</label>
                         <input type="date" name="validade" id="edit-validade" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label>Quantidade</label>
+                        <label>Quantidade*</label>
                         <input type="number" name="quantidade" id="edit-quantidade" class="form-control" min="0" required>
                     </div>
 
@@ -307,7 +313,7 @@ if ($msg || $erro || $busca) {
                     </div>
 
                     <div class="col-md-6">
-                        <label>Preço</label>
+                        <label>Preço*</label>
                         <input type="number" step="0.01" name="preco" id="edit-preco" class="form-control" required>
                     </div>
                 </div>
