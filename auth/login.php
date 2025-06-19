@@ -40,6 +40,10 @@ if ($erro) {
 
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
+
+        <p class="mt-3 text-center">
+            Ainda não tem conta? <a href="cadastro.php">Cadastre-se</a>
+        </p>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
