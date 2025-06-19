@@ -9,9 +9,10 @@ if (!isset($_SESSION['usuario'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['id'])) {
     $id = (int) $_POST['id'];
+    $id_usuario = $_SESSION['usuario'];
 
-    $stmt = $conexao->prepare("DELETE FROM produtos WHERE id = ?");
-    $stmt->bind_param("i", $id);
+    $stmt = $conexao->prepare("DELETE FROM produtos WHERE id = ? AND id_usuario = ?");
+    $stmt->bind_param("ii", $id, $id_usuario);
 
     if ($stmt->execute()) {
         header('Location: listar.php?msg=Produto excluído com sucesso');

@@ -21,9 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $principio_ativo = !empty($_POST['principio_ativo']) ? $_POST['principio_ativo'] : null;
     $registro_ms = !empty($_POST['registro_ms']) ? $_POST['registro_ms'] : null;
     $preco = $_POST['preco'] ?? 0;
+    $id_usuario = $_SESSION['usuario'];
 
-    $stmt = $conexao->prepare("UPDATE produtos SET cod_barras = ?, nome = ?, descricao = ?, grupo = ?, classificacao = ?, fabricante = ?, validade = ?, quantidade = ?, medicamento_controlado = ?, principio_ativo = ?, registro_ms = ?, preco = ? WHERE id = ?");
-    $stmt->bind_param('sssssssiissdi', $cod_barras, $nome, $descricao, $grupo, $classificacao, $fabricante, $validade, $quantidade, $medicamento_controlado, $principio_ativo, $registro_ms, $preco, $id);
+    $stmt = $conexao->prepare("UPDATE produtos SET cod_barras = ?, nome = ?, descricao = ?, grupo = ?, classificacao = ?, fabricante = ?, validade = ?, quantidade = ?, medicamento_controlado = ?, principio_ativo = ?, registro_ms = ?, preco = ? WHERE id = ? AND id_usuario = ?");
+    $stmt->bind_param('sssssssiissdii', $cod_barras, $nome, $descricao, $grupo, $classificacao, $fabricante, $validade, $quantidade, $medicamento_controlado, $principio_ativo, $registro_ms, $preco, $id, $id_usuario);
 
     if ($stmt->execute()) {
         header("Location: listar.php?msg=Produto atualizado com sucesso");

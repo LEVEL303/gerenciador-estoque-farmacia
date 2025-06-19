@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ss", $nome, $senha);
 
     if ($stmt->execute()) {
-        header("Location: login.php");
+        header("Location: login.php?msg=Usuário cadastrado com sucesso");
     } else {
         header('Location: cadastro.php?erro=Usuário já cadastrado');
     }

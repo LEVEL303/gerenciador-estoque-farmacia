@@ -6,17 +6,19 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: ../auth/login.php');
     exit;
 }
+$id_usuario = $_SESSION['usuario'];
 
 $msg = $_GET['msg'] ?? null;
 $erro = $_GET['erro'] ?? null;
 $busca = $_GET['busca'] ?? '';
 
 if (!empty($busca)) {
-    $stmt = $conexao->prepare("SELECT * FROM produtos WHERE nome LIKE ? OR cod_barras LIKE ? ORDER BY nome");
+    $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id_usuario = ? AND (nome LIKE ? OR cod_barras LIKE ?) ORDER BY nome");
     $termo = $busca . '%';
-    $stmt->bind_param("ss", $termo, $termo);
+    $stmt->bind_param("iss", $id_usuario, $termo, $termo);
 } else {
-    $stmt = $conexao->prepare("SELECT * FROM produtos ORDER BY nome");
+    $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id_usuario = ? ORDER BY nome");
+    $stmt->bind_param("i", $id_usuario);
 }
 $stmt->execute();
 $produtos = $stmt->get_result();
@@ -47,7 +49,7 @@ if ($msg || $erro || $busca) {
     </div>
 
     <form method="GET" class="mb-3">
-        <input type="text" name="busca" class="form-control mb-3" placeholder="Buscar por nome ou código de barras">
+        <input type="text" name="busca" class="form-control mb-3" placeholder="Buscar por nome ou código de barras" value="<?= htmlspecialchars($busca) ?>">
     </form>
 
     <?php if ($msg): ?>

@@ -1,7 +1,8 @@
 <?php
+$msg = $_GET['msg'] ?? null;
 $erro = $_GET['erro'] ?? null;
 
-if ($erro) {
+if ($msg || $erro) {
     echo '<script>history.replaceState(null, "", "login.php");</script>';
 }
 ?>
@@ -19,6 +20,13 @@ if ($erro) {
 <body>
 
     <div class="container mt-5" style="max-width: 400px;">
+        <?php if ($msg): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($msg) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+
         <?php if ($erro): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?= htmlspecialchars($erro) ?>

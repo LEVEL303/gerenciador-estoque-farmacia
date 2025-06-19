@@ -20,9 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $principio_ativo = !empty($_POST['principio_ativo']) ? $_POST['principio_ativo'] : null;
     $registro_ms = !empty($_POST['registro_ms']) ? $_POST['registro_ms'] : null;
     $preco = $_POST['preco'] ?? 0;
+    $id_usuario = $_SESSION['usuario'];
 
-    $stmt = $conexao->prepare("INSERT INTO produtos (cod_barras, nome, descricao, grupo, classificacao, fabricante, validade, quantidade, medicamento_controlado, principio_ativo, registro_ms, preco) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('sssssssiissd', $cod_barras, $nome, $descricao, $grupo, $classificacao, $fabricante, $validade, $quantidade, $medicamento_controlado, $principio_ativo, $registro_ms, $preco);
+    $stmt = $conexao->prepare("INSERT INTO produtos (cod_barras, nome, descricao, grupo, classificacao, fabricante, validade, quantidade, medicamento_controlado, principio_ativo, registro_ms, preco, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('sssssssiissdi', $cod_barras, $nome, $descricao, $grupo, $classificacao, $fabricante, $validade, $quantidade, $medicamento_controlado, $principio_ativo, $registro_ms, $preco, $id_usuario);
 
     if($stmt->execute()) {
         header('Location: listar.php?msg=Produto adicionado com sucesso');

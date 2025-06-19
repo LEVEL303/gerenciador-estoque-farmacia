@@ -10,10 +10,11 @@ if (!isset($_SESSION['usuario'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = (int) $_POST['id'];
     $quantidade = $_POST['quantidade'];
+    $id_usuario = $_SESSION['usuario'];
 
     if ($quantidade > 0) {
-        $stmt = $conexao->prepare("UPDATE produtos SET quantidade = quantidade + ? WHERE id = ?");
-        $stmt->bind_param('ii', $quantidade, $id);
+        $stmt = $conexao->prepare("UPDATE produtos SET quantidade = quantidade + ? WHERE id = ? AND id_usuario = ?");
+        $stmt->bind_param('iii', $quantidade, $id, $id_usuario);
 
         if ($stmt->execute()) {
             header('Location: listar.php?msg=Quantidade incrementada com sucesso');
