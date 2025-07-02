@@ -30,7 +30,7 @@ if ($erro) {
         <form action="processar_cadastro.php" method="POST">
             <div class="mb-3">
                 <label class="form-label">Nome de usuário</label>
-                <input type="text" class="form-control" name="nome"  required>
+                <input type="text" class="form-control" name="nome" maxlength="50" required>
             </div>
 
             <div class="mb-3">
