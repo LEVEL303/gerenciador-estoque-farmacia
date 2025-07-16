@@ -38,7 +38,7 @@ Obs: Se estiver usando Windows, basta instalar o WampServer.
 
 4. Acesse `localhost/gerenciador-estoque-farmacia` no navegador
 
-#### Passos (Linux)
+### Passos (Linux)
 
 1. Clone o repositório
 ```bash 
