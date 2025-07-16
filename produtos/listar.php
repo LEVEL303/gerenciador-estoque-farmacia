@@ -66,92 +66,94 @@ if ($msg || $erro || $busca) {
         </div>
     <?php endif; ?>
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Cód. Barras</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Grupo</th>
-                <th>Classificação</th>
-                <th>Fabricante</th>
-                <th>Validade</th>
-                <th>Quantidade</th>
-                <th>Controlado</th>
-                <th>Princípio Ativo</th>
-                <th>Registro MS</th>
-                <th>Preço</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="tabelaProdutos">
-        <?php while ($p = $produtos->fetch_assoc()): ?>
-            <tr>
-                <td><?= htmlspecialchars($p['cod_barras']) ?></td>
-                <td><?= htmlspecialchars($p['nome']) ?></td>
-                <td><?= htmlspecialchars($p['descricao'] ?? '') ?></td>
-                <td><?= $p['grupo'] ?></td>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Cód. Barras</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Grupo</th>
+                    <th>Classificação</th>
+                    <th>Fabricante</th>
+                    <th>Validade</th>
+                    <th>Quantidade</th>
+                    <th>Controlado</th>
+                    <th>Princípio Ativo</th>
+                    <th>Registro MS</th>
+                    <th>Preço</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaProdutos">
+            <?php while ($p = $produtos->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($p['cod_barras']) ?></td>
+                    <td><?= htmlspecialchars($p['nome']) ?></td>
+                    <td><?= htmlspecialchars($p['descricao'] ?? '') ?></td>
+                    <td><?= $p['grupo'] ?></td>
 
-                <td><?= $p['grupo'] === 'medicamento' ? $p['classificacao'] : '—' ?></td>
-                <td><?= htmlspecialchars($p['fabricante']) ?></td>
-                <td><?= date('d/m/Y', strtotime($p['validade'])) ?></td>
-                <td><?= $p['quantidade'] ?></td>
+                    <td><?= $p['grupo'] === 'medicamento' ? $p['classificacao'] : '—' ?></td>
+                    <td><?= htmlspecialchars($p['fabricante']) ?></td>
+                    <td><?= date('d/m/Y', strtotime($p['validade'])) ?></td>
+                    <td><?= $p['quantidade'] ?></td>
 
-                <td><?= $p['grupo'] === 'medicamento' ? ($p['medicamento_controlado'] ? 'Sim' : 'Não') : '—' ?></td>
-                <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['principio_ativo'] ?? '') : '—' ?></td>
-                <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['registro_ms'] ?? '') : '—' ?></td>
+                    <td><?= $p['grupo'] === 'medicamento' ? ($p['medicamento_controlado'] ? 'Sim' : 'Não') : '—' ?></td>
+                    <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['principio_ativo'] ?? '') : '—' ?></td>
+                    <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['registro_ms'] ?? '') : '—' ?></td>
 
-                <td>R$<?= number_format($p['preco'], 2, ',', '.') ?></td>
+                    <td>R$<?= number_format($p['preco'], 2, ',', '.') ?></td>
 
-                <td>
-                    <div class="d-flex flex-column align-items-start gap-2">
+                    <td>
+                        <div class="d-flex flex-column align-items-start gap-2">
 
-                        <form action="incrementar_quantidade.php" method="POST" class="d-flex gap-1">
-                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
-                            <input type="number" name="quantidade" value="1" min="1" class="form-control form-control-sm" style="width: 80px;">
-                            <button type="submit" class="btn btn-success btn-sm">+</button>
-                        </form>
+                            <form action="incrementar_quantidade.php" method="POST" class="d-flex gap-1">
+                                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                                <input type="number" name="quantidade" value="1" min="1" class="form-control form-control-sm" style="width: 80px;">
+                                <button type="submit" class="btn btn-success btn-sm">+</button>
+                            </form>
 
-                        <form action="decrementar_quantidade.php" method="POST" class="d-flex gap-1">
-                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
-                            <input type="number" name="quantidade" value="1" min="1" max="<?= $p['quantidade'] ?>" class="form-control form-control-sm" style="width: 80px;">
-                            <button class="btn btn-sm btn-warning" style="width: 27px">-</button>
-                        </form>
+                            <form action="decrementar_quantidade.php" method="POST" class="d-flex gap-1">
+                                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                                <input type="number" name="quantidade" value="1" min="1" max="<?= $p['quantidade'] ?>" class="form-control form-control-sm" style="width: 80px;">
+                                <button class="btn btn-sm btn-warning" style="width: 27px">-</button>
+                            </form>
 
-                        <div class="d-flex gap-1">
-                            <button class="btn btn-sm btn-warning"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalEditar"
-                                data-id="<?= $p['id'] ?>"
-                                data-cod="<?= htmlspecialchars($p['cod_barras']) ?>"
-                                data-nome="<?= htmlspecialchars($p['nome']) ?>"
-                                data-descricao="<?= htmlspecialchars($p['descricao'] ?? '') ?>"
-                                data-grupo="<?= $p['grupo'] ?>"
-                                data-classificacao="<?= $p['classificacao'] ?>"
-                                data-fabricante="<?= htmlspecialchars($p['fabricante']) ?>"
-                                data-validade="<?= $p['validade'] ?>"
-                                data-quantidade="<?= $p['quantidade'] ?>"
-                                data-controlado="<?= $p['medicamento_controlado'] ?>"
-                                data-principio="<?= htmlspecialchars($p['principio_ativo'] ?? '') ?>"
-                                data-ms="<?= htmlspecialchars($p['registro_ms'] ?? '') ?>"
-                                data-preco="<?= $p['preco'] ?>"
-                            >Editar
-                            </button>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-warning"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEditar"
+                                    data-id="<?= $p['id'] ?>"
+                                    data-cod="<?= htmlspecialchars($p['cod_barras']) ?>"
+                                    data-nome="<?= htmlspecialchars($p['nome']) ?>"
+                                    data-descricao="<?= htmlspecialchars($p['descricao'] ?? '') ?>"
+                                    data-grupo="<?= $p['grupo'] ?>"
+                                    data-classificacao="<?= $p['classificacao'] ?>"
+                                    data-fabricante="<?= htmlspecialchars($p['fabricante']) ?>"
+                                    data-validade="<?= $p['validade'] ?>"
+                                    data-quantidade="<?= $p['quantidade'] ?>"
+                                    data-controlado="<?= $p['medicamento_controlado'] ?>"
+                                    data-principio="<?= htmlspecialchars($p['principio_ativo'] ?? '') ?>"
+                                    data-ms="<?= htmlspecialchars($p['registro_ms'] ?? '') ?>"
+                                    data-preco="<?= $p['preco'] ?>"
+                                >Editar
+                                </button>
 
-                            <button class="btn btn-sm btn-danger"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalExcluir"
-                                data-id="<?= $p['id'] ?>"
-                                data-nome="<?= htmlspecialchars($p['nome']) ?>"
-                            >Excluir
-                            </button>
+                                <button class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalExcluir"
+                                    data-id="<?= $p['id'] ?>"
+                                    data-nome="<?= htmlspecialchars($p['nome']) ?>"
+                                >Excluir
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-        <?php endwhile; ?>
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 
     <!-- Modal Adicionar -->
     <div class="modal fade" id="modalAdicionar" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
