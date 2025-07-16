@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome']);
     $senha = $_POST['senha'];
 
-    $stmt = $conexao->prepare("SELECT id, senha FROM usuarios WHERE nome = (?)");
+    $stmt = $conexao->prepare("SELECT id, senha FROM usuarios WHERE nome = ?");
     $stmt->bind_param("s", $nome);
     $stmt->execute();
     $resultado = $stmt->get_result();
