@@ -14,7 +14,8 @@ Este projeto é uma aplicação web para controle de estoque de produtos farmac�
 - Cadastro e login de usuários
 - CRUD de produtos (cadastrar, listar, editar, excluir)
 - Filtro de busca por nome ou código de barras
-- Controle de estoque (incrementar/decrementar quantidade)
+- Controle de saída do estoque (vendas)  
+- Consulta de histórico de vendas
 
 ## Como rodar o projeto
 
