@@ -44,12 +44,16 @@ if ($msg || $erro || $busca) {
         <h2>Produtos</h2>
         <div>
             <a href="../auth/logout.php" class="btn btn-outline-danger">Sair</a>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionar">Adicionar Produto</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionar">Adicionar
+                Produto</button>
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalVenderItem">Vender
+                Item</button>
         </div>
     </div>
 
     <form method="GET" class="mb-3">
-        <input type="text" name="busca" class="form-control mb-3" placeholder="Buscar por nome ou código de barras" value="<?= htmlspecialchars($busca) ?>">
+        <input type="text" name="busca" class="form-control mb-3" placeholder="Buscar por nome ou código de barras"
+            value="<?= htmlspecialchars($busca) ?>">
     </form>
 
     <?php if ($msg): ?>
@@ -86,63 +90,55 @@ if ($msg || $erro || $busca) {
                 </tr>
             </thead>
             <tbody id="tabelaProdutos">
-            <?php while ($p = $produtos->fetch_assoc()): ?>
-                <tr>
-                    <td><?= htmlspecialchars($p['cod_barras']) ?></td>
-                    <td><?= htmlspecialchars($p['nome']) ?></td>
-                    <td><?= htmlspecialchars($p['descricao'] ?? '') ?></td>
-                    <td><?= $p['grupo'] ?></td>
+                <?php while ($p = $produtos->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($p['cod_barras']) ?></td>
+                        <td><?= htmlspecialchars($p['nome']) ?></td>
+                        <td><?= htmlspecialchars($p['descricao'] ?? '') ?></td>
+                        <td><?= $p['grupo'] ?></td>
 
-                    <td><?= $p['grupo'] === 'medicamento' ? $p['classificacao'] : '—' ?></td>
-                    <td><?= htmlspecialchars($p['fabricante']) ?></td>
-                    <td><?= date('d/m/Y', strtotime($p['validade'])) ?></td>
-                    <td><?= $p['quantidade'] ?></td>
+                        <td><?= $p['grupo'] === 'medicamento' ? $p['classificacao'] : '—' ?></td>
+                        <td><?= htmlspecialchars($p['fabricante']) ?></td>
+                        <td><?= date('d/m/Y', strtotime($p['validade'])) ?></td>
+                        <td><?= $p['quantidade'] ?></td>
 
-                    <td><?= $p['grupo'] === 'medicamento' ? ($p['medicamento_controlado'] ? 'Sim' : 'Não') : '—' ?></td>
-                    <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['principio_ativo'] ?? '') : '—' ?></td>
-                    <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['registro_ms'] ?? '') : '—' ?></td>
+                        <td><?= $p['grupo'] === 'medicamento' ? ($p['medicamento_controlado'] ? 'Sim' : 'Não') : '—' ?></td>
+                        <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['principio_ativo'] ?? '') : '—' ?></td>
+                        <td><?= $p['grupo'] === 'medicamento' ? htmlspecialchars($p['registro_ms'] ?? '') : '—' ?></td>
 
-                    <td>R$<?= number_format($p['preco'], 2, ',', '.') ?></td>
+                        <td>R$<?= number_format($p['preco'], 2, ',', '.') ?></td>
 
-                    <td>
-                        <div class="d-flex flex-column align-items-start gap-2">
-                            <button class="btn btn-sm btn-warning w-100"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalEditar"
-                                data-id="<?= $p['id'] ?>"
-                                data-cod="<?= htmlspecialchars($p['cod_barras']) ?>"
-                                data-nome="<?= htmlspecialchars($p['nome']) ?>"
-                                data-descricao="<?= htmlspecialchars($p['descricao'] ?? '') ?>"
-                                data-grupo="<?= $p['grupo'] ?>"
-                                data-classificacao="<?= $p['classificacao'] ?>"
-                                data-fabricante="<?= htmlspecialchars($p['fabricante']) ?>"
-                                data-validade="<?= $p['validade'] ?>"
-                                data-quantidade="<?= $p['quantidade'] ?>"
-                                data-controlado="<?= $p['medicamento_controlado'] ?>"
-                                data-principio="<?= htmlspecialchars($p['principio_ativo'] ?? '') ?>"
-                                data-ms="<?= htmlspecialchars($p['registro_ms'] ?? '') ?>"
-                                data-preco="<?= $p['preco'] ?>"
-                            >Editar
-                            </button>
+                        <td>
+                            <div class="d-flex flex-column align-items-start gap-2">
+                                <button class="btn btn-sm btn-warning w-100" data-bs-toggle="modal"
+                                    data-bs-target="#modalEditar" data-id="<?= $p['id'] ?>"
+                                    data-cod="<?= htmlspecialchars($p['cod_barras']) ?>"
+                                    data-nome="<?= htmlspecialchars($p['nome']) ?>"
+                                    data-descricao="<?= htmlspecialchars($p['descricao'] ?? '') ?>"
+                                    data-grupo="<?= $p['grupo'] ?>" data-classificacao="<?= $p['classificacao'] ?>"
+                                    data-fabricante="<?= htmlspecialchars($p['fabricante']) ?>"
+                                    data-validade="<?= $p['validade'] ?>" data-quantidade="<?= $p['quantidade'] ?>"
+                                    data-controlado="<?= $p['medicamento_controlado'] ?>"
+                                    data-principio="<?= htmlspecialchars($p['principio_ativo'] ?? '') ?>"
+                                    data-ms="<?= htmlspecialchars($p['registro_ms'] ?? '') ?>"
+                                    data-preco="<?= $p['preco'] ?>">Editar
+                                </button>
 
-                            <button class="btn btn-sm btn-danger w-100"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalExcluir"
-                                data-id="<?= $p['id'] ?>"
-                                data-nome="<?= htmlspecialchars($p['nome']) ?>"
-                            >Excluir
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
+                                <button class="btn btn-sm btn-danger w-100" data-bs-toggle="modal"
+                                    data-bs-target="#modalExcluir" data-id="<?= $p['id'] ?>"
+                                    data-nome="<?= htmlspecialchars($p['nome']) ?>">Excluir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>
 
     <!-- Modal Adicionar -->
     <div class="modal fade" id="modalAdicionar" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg"> 
+        <div class="modal-dialog modal-lg">
             <form action="adicionar_produto.php" method="POST" class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalAdicionarLabel">Adicionar Produto</h5>
@@ -291,7 +287,8 @@ if ($msg || $erro || $busca) {
 
                     <div class="col-md-6">
                         <label>Quantidade*</label>
-                        <input type="number" name="quantidade" id="edit-quantidade" class="form-control" min="0" required>
+                        <input type="number" name="quantidade" id="edit-quantidade" class="form-control" min="0"
+                            required>
                     </div>
 
                     <div class="col-md-6">
@@ -339,7 +336,7 @@ if ($msg || $erro || $busca) {
                     <p>Tem certeza que deseja excluir <strong id="excluirNome"></strong>?</p>
                     <input type="hidden" name="id" id="excluirId">
                 </div>
-                
+
                 <div class="modal-footer">
                     <button class="btn btn-danger">Excluir</button>
                 </div>
@@ -355,9 +352,9 @@ if ($msg || $erro || $busca) {
             modalEditar.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const fields = [
-                'id', 'cod', 'nome', 'descricao', 'grupo', 'classificacao',
-                'fabricante', 'validade', 'quantidade', 'controlado',
-                'principio', 'ms', 'preco'
+                    'id', 'cod', 'nome', 'descricao', 'grupo', 'classificacao',
+                    'fabricante', 'validade', 'quantidade', 'controlado',
+                    'principio', 'ms', 'preco'
                 ];
 
                 fields.forEach(f => {
@@ -372,6 +369,80 @@ if ($msg || $erro || $busca) {
                 });
             });
         });
+    </script>
+
+    <!-- Modal Vender Item -->
+    <div class="modal fade" id="modalVenderItem" tabindex="-1" aria-labelledby="modalVenderItemLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form action="../vendas/processar_venda.php" method="POST" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalVenderItemLabel">Vender Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- parte para buscar o produto -->
+                    <div class="mb-3">
+                        <label for="buscaProduto" class="form-label">Nome ou código do produto</label>
+                        <input type="text" class="form-control" id="buscaProduto" oninput="buscarProdutos()">
+                    </div>
+
+                    <!-- tabela com o resoltado da busca do produto -->
+                    <div id="resultadoProdutos" class="mb-3" style="max-height: 300px; overflow-y: auto;"></div>
+
+                    <!-- para armazenar o id do produto, tudo escondido -->
+                    <input type="hidden" id="produtoSelecionado" name="produto_id" required>
+
+                    <!-- Quantidade que vai vender -->
+                    <div class="mb-3">
+                        <label for="quantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" name="quantidade" id="quantidade" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Registrar Venda</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        function buscarProdutos() {
+            const termo = document.getElementById('buscaProduto').value;
+
+            if (termo.length < 2) {
+                document.getElementById('resultadoProdutos').innerHTML = '';
+                return;
+            }
+
+            fetch('../vendas/buscar_produtos.php?termo=' + encodeURIComponent(termo))
+                .then(res => res.json())
+                .then(produtos => {
+                    let html = '';
+
+                    if (produtos.length === 0) {
+                        html = '<p class="text-muted">Nenhum produto encontrado.</p>';
+                    } else {
+                        html = produtos.map(p => `
+                    <label class="border rounded p-2 d-block mb-2">
+                        <input type="radio" name="produto_opcao" value="${p.id}" onclick="document.getElementById('produtoSelecionado').value = ${p.id}">
+                        <strong>${p.nome}</strong> — ${p.fabricante}<br>
+                        Classificação: ${p.classificacao || '-'} |
+                        Controlado: ${p.medicamento_controlado == 1 ? 'Sim' : 'Não'}<br>
+                        Preço: R$ ${parseFloat(p.preco).toFixed(2)}
+                    </label>
+                `).join('');
+                    }
+
+                    document.getElementById('resultadoProdutos').innerHTML = html;
+                })
+                .catch(erro => {
+                    console.error('Erro ao buscar produtos:', erro);
+                    document.getElementById('resultadoProdutos').innerHTML = '<p class="text-danger">Erro na busca. Tente novamente.</p>';
+                });
+        }
     </script>
 
     <script>
