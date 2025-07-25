@@ -7,67 +7,89 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-$id_usuario = $_SESSION['usuario'];
-$id_produto = $_POST['produto_id'] ?? null;
-$quantidade = $_POST['quantidade'] ?? null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_usuario = $_SESSION['usuario'];
+    $produtos_venda = $_POST['produtos'] ?? [];
 
-// Verificações básicas 
-if (!$id_produto || !$quantidade || $quantidade <= 0) {
-    header('Location: ../produtos/listar.php?erro=Dados inválidos para a venda');
-    exit;
-}
+    if (empty($produtos_venda)) {
+        header('Location: ../produtos/listar.php?erro=Nenhum produto foi adicionado à venda');
+        exit;
+    }
 
-// Verificar se o produto existe e se há estoque suficiente
-$stmt = $conexao->prepare("SELECT nome, quantidade, preco FROM produtos WHERE id = ?");
-$stmt->bind_param("i", $id_produto);
-$stmt->execute();
-$resultado = $stmt->get_result();
+    $conexao->begin_transaction();
 
-if ($resultado->num_rows !== 1) {
-    header('Location: ../produtos/listar.php?erro=Produto não encontrado');
-    exit;
-}
+    $total_venda = 0;
+    $erros = [];
 
-$produto = $resultado->fetch_assoc();
+    foreach ($produtos_venda as $item) {
+        $id_produto = $item['id'];
+        $qtd_vendida = (int)$item['qtd'];
 
-if ($produto['quantidade'] < $quantidade) {
-    header('Location: ../produtos/listar.php?erro=Estoque insuficiente para o produto ' . urlencode($produto['nome']));
-    exit;
-}
+        if ($qtd_vendida < 1) {
+            $erros[] = "Quantidade inválida";
+            continue;
+        }
 
-// Calcular o total da venda
-$total = $produto['preco'] * $quantidade;
+        $stmt_verifica = $conexao->prepare("SELECT preco, quantidade FROM produtos WHERE id = ? AND id_usuario = ? FOR UPDATE");
+        $stmt_verifica->bind_param("ii", $id_produto, $id_usuario);
+        $stmt_verifica->execute();
+        $produto_db = $stmt_verifica->get_result()->fetch_assoc();
+        $stmt_verifica->close();
 
-// Iniciar transação
-$conexao->begin_transaction();
+        if (!$produto_db || $produto_db['quantidade'] < $qtd_vendida) {
+            $erros[] = "Estoque insuficiente para registrar a venda";
+            continue;
+        }
 
-try {
-    // 1. Inserir na tabela de vendas
-    $stmtVenda = $conexao->prepare("INSERT INTO vendas (total, id_usuario) VALUES (?, ?)");
-    $stmtVenda->bind_param("di", $total, $id_usuario);
-    $stmtVenda->execute();
-    $id_venda = $stmtVenda->insert_id;
+        $total_venda += $produto_db['preco'] * $qtd_vendida;
+    }
 
-    // 2. Inserir item da venda
-    $stmtItem = $conexao->prepare("INSERT INTO itens_venda (produto_id, venda_id, quantidade) VALUES (?, ?, ?)");
-    $stmtItem->bind_param("iii", $id_produto, $id_venda, $quantidade);
-    $stmtItem->execute();
+    if (!empty($erros)) {
+        $conexao->rollback();
+        header('Location: ../produtos/listar.php?erro=' . urlencode(implode(' ', $erros)));
+        exit;
+    }
 
-    // 3. Atualizar o estoque do produto
-    $stmtAtualiza = $conexao->prepare("UPDATE produtos SET quantidade = quantidade - ? WHERE id = ?");
-    $stmtAtualiza->bind_param("ii", $quantidade, $id_produto);
-    $stmtAtualiza->execute();
+    $stmt_venda = $conexao->prepare("INSERT INTO vendas (total, id_usuario) VALUES (?, ?)");
+    $stmt_venda->bind_param("di", $total_venda, $id_usuario);
 
-    // Confirmar transação
+    if (!$stmt_venda->execute()) {
+        $conexao->rollback();
+        header('Location: ../produtos/listar.php?erro=Falha ao registrar a venda principal.');
+        exit;
+    }
+    $id_venda = $conexao->insert_id;
+    $stmt_venda->close();
+
+    foreach ($produtos_venda as $item) {
+        $id_produto = $item['id'];
+        $qtd_vendida = (int)$item['qtd'];
+
+        $stmt_item = $conexao->prepare("INSERT INTO itens_venda (produto_id, venda_id, quantidade) VALUES (?, ?, ?)");
+        $stmt_item->bind_param("iii", $id_produto, $id_venda, $qtd_vendida);
+        $sucesso_item = $stmt_item->execute();
+        $stmt_item->close();
+        
+        if (!$sucesso_item) {
+            $conexao->rollback();
+            header('Location: ../produtos/listar.php?erro=Falha ao registrar um item da venda.');
+            exit;
+        }
+
+        $stmt_update = $conexao->prepare("UPDATE produtos SET quantidade = quantidade - ? WHERE id = ?");
+        $stmt_update->bind_param("ii", $qtd_vendida, $id_produto);
+        $sucesso_update = $stmt_update->execute();
+        $stmt_update->close();
+
+        if (!$sucesso_update) {
+            $conexao->rollback();
+            header('Location: ../produtos/listar.php?erro=Falha ao atualizar o estoque.');
+            exit;
+        }
+    }
+    
     $conexao->commit();
-
-    header('Location: ../produtos/listar.php?msg=Venda registrada com sucesso');
-    exit;
-
-} catch (Exception $e) {
-    // Desfazer tudo em caso de erro
-    $conexao->rollback();
-    header('Location: ../produtos/listar.php?erro=Erro ao registrar a venda: ' . urlencode($e->getMessage()));
-    exit;
+    $conexao->close();
+    header('Location: ../produtos/listar.php?msg=Venda registrada com sucesso!');
 }
-?>
+$conexao->close();
