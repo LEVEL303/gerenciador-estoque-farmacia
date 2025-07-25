@@ -375,37 +375,115 @@ if ($msg || $erro || $busca) {
     <div class="modal fade" id="modalVenderItem" tabindex="-1" aria-labelledby="modalVenderItemLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <form action="../vendas/processar_venda.php" method="POST" class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalVenderItemLabel">Vender Item</h5>
+            <div class="modal-content">
+
+                <!-- Cabeçalho com título e botões para trocar abas -->
+                <div class="modal-header d-flex align-items-center">
+                    <h5 class="modal-title" id="modalVenderItemLabel">Venda</h5>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="btnAbaVenda"
+                            onclick="mostrarAba('venda')">Vender Item</button>
+                        <button type="button" class="btn btn-outline-secondary" id="btnAbaRegistro"
+                            onclick="mostrarAba('registro'); carregarRegistroVendas();">Registro de Vendas</button>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
+
+                <!-- Corpo do modal com abas -->
                 <div class="modal-body">
-                    <!-- parte para buscar o produto -->
-                    <div class="mb-3">
-                        <label for="buscaProduto" class="form-label">Nome ou código do produto</label>
-                        <input type="text" class="form-control" id="buscaProduto" oninput="buscarProdutos()">
+
+                    <!-- Aba de Venda (ativa por padrão) -->
+                    <form action="../vendas/processar_venda.php" method="POST" id="abaVenda" style="display: block;">
+                        <!-- parte para buscar o produto -->
+                        <div class="mb-3">
+                            <label for="buscaProduto" class="form-label">Nome ou código do produto</label>
+                            <input type="text" class="form-control" id="buscaProduto" oninput="buscarProdutos()">
+                        </div>
+
+                        <!-- tabela com o resultado da busca do produto -->
+                        <div id="resultadoProdutos" class="mb-3" style="max-height: 300px; overflow-y: auto;"></div>
+
+                        <!-- para armazenar o id do produto, tudo escondido -->
+                        <input type="hidden" id="produtoSelecionado" name="produto_id" required>
+
+                        <!-- Quantidade que vai vender -->
+                        <div class="mb-3">
+                            <label for="quantidade" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" name="quantidade" id="quantidade" min="1"
+                                required>
+                        </div>
+
+                        <div class="modal-footer p-0 pt-3">
+                            <button type="submit" class="btn btn-success">Registrar Venda</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+
+                    <!-- Aba de Registro (oculta inicialmente) -->
+                    <div id="abaRegistro" style="display: none;">
+                        <div id="listaRegistroVendas" class="table-responsive">
+                            <!-- Lista de vendas será carregada aqui via AJAX -->
+                        </div>
                     </div>
 
-                    <!-- tabela com o resoltado da busca do produto -->
-                    <div id="resultadoProdutos" class="mb-3" style="max-height: 300px; overflow-y: auto;"></div>
-
-                    <!-- para armazenar o id do produto, tudo escondido -->
-                    <input type="hidden" id="produtoSelecionado" name="produto_id" required>
-
-                    <!-- Quantidade que vai vender -->
-                    <div class="mb-3">
-                        <label for="quantidade" class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" name="quantidade" id="quantidade" min="1" required>
-                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Registrar Venda</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
+
+    <script>
+        function mostrarAba(aba) {
+            // Oculta as abas
+            document.getElementById('abaVenda').style.display = 'none';
+            document.getElementById('abaRegistro').style.display = 'none';
+
+            // Remove estilos ativos dos botões
+            document.getElementById('btnAbaVenda').classList.remove('btn-primary');
+            document.getElementById('btnAbaVenda').classList.add('btn-outline-secondary');
+            document.getElementById('btnAbaRegistro').classList.remove('btn-primary');
+            document.getElementById('btnAbaRegistro').classList.add('btn-outline-secondary');
+
+            if (aba === 'venda') {
+                document.getElementById('abaVenda').style.display = 'block';
+                document.getElementById('btnAbaVenda').classList.add('btn-primary');
+                document.getElementById('btnAbaVenda').classList.remove('btn-outline-secondary');
+            } else {
+                document.getElementById('abaRegistro').style.display = 'block';
+                document.getElementById('btnAbaRegistro').classList.add('btn-primary');
+                document.getElementById('btnAbaRegistro').classList.remove('btn-outline-secondary');
+                carregarRegistroVendas();
+            }
+        }
+
+        function carregarRegistroVendas() {
+            fetch('../vendas/listar_vendas.php')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('listaVendas').innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('listaVendas').innerHTML = '<p class="text-danger">Erro ao carregar vendas.</p>';
+                });
+        }
+    </script>
+
+    <script>
+function carregarRegistroVendas() {
+    fetch('../vendas/obter_registros.php')
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao buscar registros');
+            return response.text(); // ou .json() se preferir enviar JSON
+        })
+        .then(data => {
+            document.getElementById('listaRegistroVendas').innerHTML = data;
+        })
+        .catch(error => {
+            document.getElementById('listaRegistroVendas').innerHTML =
+                `<div class="alert alert-danger">Erro ao carregar registros: ${error.message}</div>`;
+        });
+}
+</script>
 
 
     <script>

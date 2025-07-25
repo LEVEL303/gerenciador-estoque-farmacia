@@ -1,4 +1,8 @@
 
+documento de atualização 1 de ryam
+
+excluir esse documento apos atualização da documentação 
+
 #  Documentação da Funcionalidade: "Vender Item"
 > Sistema: **Gerenciador de Estoque de Farmácia**  
 > Recurso implementado: **Venda de Produtos com Registro em Banco de Dados**  
