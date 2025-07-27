@@ -38,18 +38,21 @@ if ($msg || $erro || $busca) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="p-4">
+<body class="p-4" style="background-color: #ddecfbff">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Produtos</h2>
-        <div>
-            <a href="../auth/logout.php" class="btn btn-outline-danger">Sair</a>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionar">Adicionar Produto</button>
+    <div class="d-flex justify-content-between align-items-center mb-3 bg-red">
+        <div class="d-flex flex-row align-items-end justify-content-center gap-1">
+        <h2 style="font-weight: bold; font-size: 22px">Produtos</h2>
+        <img src="../assets/icon.svg" alt="Logo" class="img-fluid" style="max-height: 40px;">    
+        </div>
+        <div class="d-flex flex-row-reverse align-items-center gap-2">
+            <a href="../auth/logout.php" class="btn bg-danger text-white">Sair</a>
+            <button class="btn btn-primary p-1" data-bs-toggle="modal" data-bs-target="#modalAdicionar">Adicionar Produto</button>
         </div>
     </div>
 
     <form method="GET" class="mb-3">
-        <input type="text" name="busca" class="form-control mb-3" placeholder="Buscar por nome ou código de barras" value="<?= htmlspecialchars($busca) ?>">
+        <input type="text" name="busca" class="form-control mb-3 p-2" style="font-size:" placeholder="Buscar por nome ou código de barras" value="<?= htmlspecialchars($busca) ?>">
     </form>
 
     <?php if ($msg): ?>
@@ -141,7 +144,7 @@ if ($msg || $erro || $busca) {
     </div>
 
     <!-- Modal Adicionar -->
-    <div class="modal fade" id="modalAdicionar" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
+    <div class="modal fade" id="modalAdicionar" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true" >
         <div class="modal-dialog modal-lg"> 
             <form action="adicionar_produto.php" method="POST" class="modal-content">
                 <div class="modal-header">
