@@ -1,5 +1,3 @@
-CREATE DATABASE estoque_farmacia;
-
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(50) NOT NULL UNIQUE,
